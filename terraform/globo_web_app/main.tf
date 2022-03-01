@@ -3,9 +3,9 @@
 ##################################################################################
 
 provider "aws" {
-  access_key = "ACCESS_KEY"
-  secret_key = "SECRET_KEY"
-  region     = "eu-north-1"
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
+  region     = var.aws_region
 }
 
 ##################################################################################
@@ -24,35 +24,25 @@ data "aws_ssm_parameter" "ami" {
 resource "aws_vpc" "vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = "true"
-  tags = {
-    Name = "Terraform_VPC"
-  }
-
+  tags                 = local.common_tags
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
-  tags = {
-    Name = "Terraform_IGW"
-  }
-
+  tags   = local.common_tags
 }
 
 resource "aws_subnet" "subnet1" {
   cidr_block              = "10.0.0.0/24"
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = "true"
-  tags = {
-    Name = "Terraform_Subnet"
-  }
+  tags                    = local.common_tags
 }
 
 # ROUTING #
 resource "aws_route_table" "rtb" {
   vpc_id = aws_vpc.vpc.id
-  tags = {
-    Name = "Terraform_RTB"
-  }
+  tags   = local.common_tags
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -70,6 +60,7 @@ resource "aws_route_table_association" "rta-subnet1" {
 resource "aws_security_group" "nginx-sg" {
   name   = "nginx_sg"
   vpc_id = aws_vpc.vpc.id
+  tags = local.common_tags
 
   # HTTP access from anywhere
   ingress {
@@ -91,13 +82,11 @@ resource "aws_security_group" "nginx-sg" {
 # INSTANCES #
 resource "aws_instance" "nginx1" {
   ami                    = nonsensitive(data.aws_ssm_parameter.ami.value)
-  instance_type          = "t3.micro"
+  instance_type          = var.ecs_instance_type
   subnet_id              = aws_subnet.subnet1.id
   vpc_security_group_ids = [aws_security_group.nginx-sg.id]
 
-  tags = {
-    Name = "Terraform_Nginx"
-  }
+  tags = local.common_tags
 
   user_data = <<EOF
                 #! /bin/bash

@@ -1,3 +1,5 @@
+.DS_Store
+terraform/.DS_Store
 pdf
 .idea
 #  Local .terraform directories
