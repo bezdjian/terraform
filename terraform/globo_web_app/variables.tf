@@ -1,9 +1,13 @@
+# Assign environment variable by exporting.
+# $ TF_VAR_aws_secret_key=<secretKey>
 variable "aws_access_key" {
   type = string
   description = "AWS Access Key"
   sensitive = true
 }
 
+# Assign environment variable by exporting.
+# $ TF_VAR_aws_secret_key=<secretKey>
 variable "aws_secret_key" {
   type = string
   description = "AWS Secret Key"
