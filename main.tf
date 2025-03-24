@@ -138,3 +138,8 @@ resource "aws_eip" "eip" {
     "Name" = "MainEIP"
   }
 }
+
+
+output "server_ip" {
+  value = aws_instance.web-server.public_ip  
+}
