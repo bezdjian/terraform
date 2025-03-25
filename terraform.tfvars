@@ -1,0 +1,1 @@
+az = "eu-north-1a"

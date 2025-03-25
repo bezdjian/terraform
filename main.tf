@@ -2,10 +2,15 @@ provider "aws" {
   region = "eu-north-1"
 }
 
+variable "az" {
+  description = "value of the availability zone"
+  type        = string
+}
+
 resource "aws_instance" "web-server" {
   instance_type     = "t3.micro"
   ami               = "ami-0c2e61fdcb5495691"
-  availability_zone = "eu-north-1a"
+  availability_zone = var.az
   key_name          = "my-key-pair"
 
   network_interface {
@@ -38,7 +43,7 @@ resource "aws_vpc" "main_vpc" {
 resource "aws_subnet" "main_subnet" {
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "eu-north-1a"
+  availability_zone = var.az
 
   tags = {
     "Name" = "MainSubnet"
