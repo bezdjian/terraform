@@ -1,1 +1,4 @@
-az = "eu-north-1a"
+az = [{
+  name  = "First Availability Zone"
+  value = "eu-north-1a"
+}]
